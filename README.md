@@ -1,16 +1,18 @@
 # lovstudio:dev-blog
 
-![Version](https://img.shields.io/badge/version-0.1.0-CC785C)
+![Version](https://img.shields.io/badge/version-0.3.0-CC785C)
 
-Summarize a development session into a practical Chinese blog post and publish
-it to LovStudio's Supabase-backed website blog feed.
+Canonical publishing contract for LovStudio's Supabase-backed website blog
+feed. It can write and publish a development blog post directly, and it defines
+the automation semantics used by dependent skills such as `deep-research` and
+`lovstudio-distill`.
 
 Part of [lovstudio skills](https://github.com/lovstudio/skills) — by [lovstudio.ai](https://lovstudio.ai)
 
 ## Install
 
 ```bash
-git clone https://github.com/lovstudio/dev-blog-skill ~/.claude/skills/lovstudio-dev-blog
+npx lovstudio skills add dev-blog -g -y
 ```
 
 Requires Python 3.8+. No third-party Python packages are needed.
@@ -26,16 +28,29 @@ Ask Claude Code:
 The skill will gather context, draft a Chinese article, save a local Markdown
 draft, run a dry-run payload check, then publish to Supabase `blog_posts`.
 
+Dependent skills publish generated Markdown through the same contract:
+
+```bash
+WEB_ROOT="${LOVSTUDIO_DEV_BLOG_WEB_ROOT:?set LOVSTUDIO_DEV_BLOG_WEB_ROOT}"
+cd "$WEB_ROOT" && pnpm run sync:research -- [markdown_path]
+cd "$WEB_ROOT" && pnpm run sync:distill -- [markdown_path]
+```
+
+Those sync scripts own source-specific parsing, while `lovstudio-dev-blog` owns
+the shared `blog_posts` semantics: `source_kind`, `source_path`,
+`is_visible`, `show_in_index`, and final publish status reporting.
+
 You can also run the publisher directly:
 
 ```bash
-python3 ~/.claude/skills/lovstudio-dev-blog/scripts/publish_blog_post.py \
+WEB_ROOT="${LOVSTUDIO_DEV_BLOG_WEB_ROOT:?set LOVSTUDIO_DEV_BLOG_WEB_ROOT}"
+python3 scripts/publish_blog_post.py \
   --input .output/dev-blog/example.md \
   --title "一次开发上下文如何变成可复用博客" \
   --slug "dev-context-to-blog" \
   --excerpt "把开发过程沉淀成网站博客，关键在于先结构化上下文，再用 Supabase 作为发布源。" \
   --tags "dev,lovstudio,blog" \
-  --env-file /Users/mark/lovstudio/coding/web/.env.local
+  --env-file "$WEB_ROOT/.env.local"
 ```
 
 ## Options
@@ -67,6 +82,11 @@ The script upserts into `blog_posts` by `slug` and sets:
 
 It requires `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` in the
 environment or in the file passed through `--env-file`.
+
+## User Configuration
+
+Set `LOVSTUDIO_DEV_BLOG_WEB_ROOT` to the website repo root used for sync scripts
+and default `.env.local` lookup.
 
 ## License
 

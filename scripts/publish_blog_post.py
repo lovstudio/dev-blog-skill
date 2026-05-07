@@ -101,6 +101,9 @@ def build_payload(args: argparse.Namespace, content: str) -> Dict[str, Any]:
     title = args.title.strip()
     if not title:
         raise SystemExit("--title is required")
+    cover = args.cover.strip()
+    if not args.draft and not cover:
+        raise SystemExit("--cover is required for published posts. Generate and upload a cover, or pass --draft.")
 
     slug = args.slug.strip() if args.slug else slugify(title)
     excerpt = args.excerpt.strip() if args.excerpt else first_paragraph(content)
@@ -113,7 +116,7 @@ def build_payload(args: argparse.Namespace, content: str) -> Dict[str, Any]:
         "title": title,
         "excerpt": excerpt,
         "content_mdx": content,
-        "cover": args.cover or None,
+        "cover": cover or None,
         "tags": tags,
         "author": args.author,
         "published_at": published_at,
@@ -169,7 +172,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--excerpt", default="", help="Short summary. Defaults to the first paragraph.")
     parser.add_argument("--tags", default="dev,lovstudio", help="Comma-separated tags.")
     parser.add_argument("--author", default=DEFAULT_AUTHOR, help="Author name.")
-    parser.add_argument("--cover", default="", help="Optional cover image URL.")
+    parser.add_argument("--cover", default="", help="Public cover image URL. Required unless --draft is set.")
     parser.add_argument("--published-at", default="", help="ISO timestamp. Defaults to now.")
     parser.add_argument("--source-kind", default=DEFAULT_SOURCE_KIND, help="Source kind stored in blog_posts.source_kind.")
     parser.add_argument("--source-path", default="", help="Stable source key. Defaults to dev-blog:<slug>.")
