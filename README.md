@@ -1,6 +1,6 @@
 # lovstudio:dev-blog
 
-![Version](https://img.shields.io/badge/version-0.3.0-CC785C)
+![Version](https://img.shields.io/badge/version-0.3.1-CC785C)
 
 Canonical publishing contract for LovStudio's Supabase-backed website blog
 feed. It can write and publish a development blog post directly, and it defines
