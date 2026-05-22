@@ -1,6 +1,6 @@
 # lovstudio:dev-blog
 
-![Version](https://img.shields.io/badge/version-0.3.1-CC785C)
+![Version](https://img.shields.io/badge/version-0.3.2-CC785C)
 
 Canonical publishing contract for LovStudio's Supabase-backed website blog
 feed. It can write and publish a development blog post directly, and it defines
@@ -26,7 +26,8 @@ Ask Claude Code:
 ```
 
 The skill will gather context, draft a Chinese article, save a local Markdown
-draft, run a dry-run payload check, then publish to Supabase `blog_posts`.
+draft, generate and upload a cover, run a dry-run payload check, then publish
+to Supabase `blog_posts` by default.
 
 Dependent skills publish generated Markdown through the same contract:
 
@@ -50,6 +51,7 @@ python3 scripts/publish_blog_post.py \
   --slug "dev-context-to-blog" \
   --excerpt "把开发过程沉淀成网站博客，关键在于先结构化上下文，再用 Supabase 作为发布源。" \
   --tags "dev,lovstudio,blog" \
+  --cover "https://example.com/blog-cover.webp" \
   --env-file "$WEB_ROOT/.env.local"
 ```
 
@@ -63,7 +65,7 @@ python3 scripts/publish_blog_post.py \
 | `--excerpt` | first paragraph | Blog card summary. |
 | `--tags` | `dev,lovstudio` | Comma-separated tags. |
 | `--author` | `Mark` | Author name. |
-| `--cover` | empty | Optional cover image URL. |
+| `--cover` | empty | Required for published posts. Use `--draft` to skip cover while saving a hidden draft. |
 | `--published-at` | now | ISO timestamp. |
 | `--source-kind` | `dev-skill` | Stored in `blog_posts.source_kind`. |
 | `--source-path` | `dev-blog:<slug>` | Stable source key. |

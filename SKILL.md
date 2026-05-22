@@ -16,7 +16,7 @@ compatibility: >
   available in environment variables or a local .env file.
 metadata:
   author: lovstudio
-  version: "0.3.1"
+  version: "0.3.2"
   tags: dev blog supabase writing publishing
 ---
 
@@ -64,6 +64,17 @@ Supported publishing modes:
 - Generated artifact sync mode: a dependent skill generates Markdown, then uses
   the source-specific sync command below under this contract.
 
+Default publishing behavior:
+
+- Direct article mode publishes by default after a dry run, including cover
+  generation/upload and the non-dry-run Supabase upsert.
+- Do not ask for confirmation before publishing unless the user explicitly
+  requests a confirmation gate.
+- Skip publishing only when the user explicitly asks for draft/local-only/no
+  publish behavior, or when a required blocker exists such as missing
+  credentials, missing website repo, cover generation failure, or schema/API
+  failure.
+
 Current dependent publishing commands:
 
 ```bash
@@ -89,9 +100,10 @@ Collect the source material before writing:
 - The final decision or implementation, including tradeoffs.
 - What a future reader should learn from this case.
 
-If the topic, audience, or publish target is unclear, use `AskUserQuestion`
-for one concise question. Do not ask for fields that can be inferred from the
-current context.
+If the topic or audience is unclear, use `AskUserQuestion` for one concise
+question. The publish target defaults to the LovStudio website blog; ask about
+the target only if the user mentions multiple possible destinations. Do not ask
+for fields that can be inferred from the current context.
 
 ### Step 2: Draft the Article
 
@@ -189,8 +201,10 @@ python3 scripts/publish_blog_post.py \
 
 Then publish:
 
-If the user did not explicitly ask to publish, use `AskUserQuestion` before
-running the non-dry-run publish command.
+Publish by default after the dry run succeeds. Do not ask for confirmation
+before running the non-dry-run publish command unless the user explicitly asks
+for a confirmation gate. If the user asks for draft/local-only/no publish, stop
+after saving the draft and report the absolute draft path.
 
 ```bash
 WEB_ROOT="${LOVSTUDIO_DEV_BLOG_WEB_ROOT:?set LOVSTUDIO_DEV_BLOG_WEB_ROOT}"
