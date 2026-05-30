@@ -1,4 +1,4 @@
-# lovstudio:dev-blog
+# lovstudio-dev-blog
 
 ![Version](https://img.shields.io/badge/version-0.3.2-CC785C)
 
@@ -22,7 +22,7 @@ Requires Python 3.8+. No third-party Python packages are needed.
 Ask Claude Code:
 
 ```text
-/lovstudio:dev-blog 总结这次开发过程，生成一篇博客并同步到网站
+/lovstudio-dev-blog 总结这次开发过程，生成一篇博客并同步到网站
 ```
 
 The skill will gather context, draft a Chinese article, save a local Markdown

@@ -125,7 +125,7 @@ def build_payload(args: argparse.Namespace, content: str) -> Dict[str, Any]:
         "source_kind": args.source_kind,
         "source_path": source_path,
         "research_artifacts": {
-            "generated_by": "lovstudio:dev-blog",
+            "generated_by": "lovstudio-dev-blog",
             "schema": 1,
         },
     }
