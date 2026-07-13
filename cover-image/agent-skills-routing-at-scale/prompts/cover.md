@@ -1,7 +1,7 @@
 # Content Context
-Article title: 大目录，小激活集：Skills 增长后的 Agent 路由与用户发现
-Content summary: 当 Skill 目录从几十个增长到上百个，真正的瓶颈不是库存，而是同时暴露的候选过多、描述重叠与缺少共存评测。文章提出“全量目录、确定性过滤、混合召回、少量候选重排、按需加载、持续评测”的分层路由方法，并强调用户应看到目标工作流，而不是内部技术组件。
-Keywords: Agent Skills, 大目录, 小激活集, 意图路由, 渐进披露, 用户发现, 共存评测, LovStudio
+Article title: Agent Skills 管理最佳实践：当你已经有 100+ Skills 之后
+Content summary: 当一个用户已经安装上百个 Agent Skills，问题会从“有没有能力”变成“如何盘点、分组、启停、去重、路由、评测、版本化和退役”。文章提出以 Registry、Scope、Bundle、Router、Runtime、Eval 和 Lifecycle 组成的管理系统，让后台目录可以增长，而每次请求只激活少量相关能力。
+Keywords: Agent Skills, 100+ Skills, Registry, Bundle, 意图路由, 渐进披露, 共存评测, 生命周期
 
 # Visual Design
 Cover theme: 精准分流
