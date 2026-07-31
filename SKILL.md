@@ -4,11 +4,12 @@ category: Dev Tools
 tagline: "Write or sync Markdown into LovStudio's Supabase-backed website blog feed."
 description: >
   Own the LovStudio website blog publishing contract. Summarize the current
-  development context into a practical Chinese blog post and publish it to
-  LovStudio's Supabase `blog_posts` table, and provide the automation semantics
-  that dependent skills use when they sync generated Markdown artifacts to the
-  website blog. Trigger when the user says "生成博客", "同步到网站博客",
-  "总结上下文写博文", "开发日志", "generate blog post",
+  development context and its screenshots, diagrams, or other visual evidence
+  into a practical Chinese blog post, then publish it to LovStudio's Supabase
+  `blog_posts` table. Also provide the automation semantics that dependent
+  skills use when they sync generated Markdown artifacts to the website blog.
+  Trigger when the user says "生成博客", "同步到网站博客", "总结上下文写博文",
+  "开发日志", "把这些截图写进文章", "generate blog post",
   "sync to website blog", or "summarize context as blog".
 license: MIT
 compatibility: >
@@ -16,7 +17,7 @@ compatibility: >
   available in environment variables or a local .env file.
 metadata:
   author: lovstudio
-  version: "0.3.2"
+  version: "0.4.0"
   tags: dev blog supabase writing publishing
 ---
 
@@ -50,6 +51,10 @@ they publish generated Markdown artifacts to `blog_posts`.
 - `is_visible=true` means the detail page is public.
 - `show_in_index=true` means the post appears in the `/blog` list; dependent
   skills may choose different defaults.
+- Meaningful screenshots, diagrams, charts, and before/after images supplied by
+  the user are article source material. Inventory them before drafting and
+  embed the selected items as durable public assets instead of silently
+  dropping them.
 - Final responses from dependent skills must include
   `Published to LovStudio: yes/no` and the public URL when publish succeeds.
 
@@ -97,8 +102,20 @@ Collect the source material before writing:
 
 - Recent user intent and constraints from the conversation.
 - Relevant files, diffs, commands, errors, and verification output.
+- Every attached image, user-supplied image path, reproduction screenshot,
+  generated diagram, and before/after artifact relevant to the story.
 - The final decision or implementation, including tradeoffs.
 - What a future reader should learn from this case.
+
+Create a visual asset inventory before drafting whenever visual material exists.
+Classify each item as problem evidence, key detail, before/after proof,
+architecture explanation, or decorative. Default to including user-provided
+visual evidence that materially improves understanding. Record a concrete
+reason when excluding it, such as redundancy, illegibility, irrelevance, or
+private information.
+
+When the inventory contains visual material, read
+`references/inline-media.md` completely before drafting or uploading assets.
 
 If the topic or audience is unclear, use `AskUserQuestion` for one concise
 question. The publish target defaults to the LovStudio website blog; ask about
@@ -127,6 +144,14 @@ Style rules:
 - Avoid generic AI productivity claims.
 - Do not include secrets, tokens, private customer details, or raw `.env` values.
 - Keep code excerpts short and only when they explain the decision.
+- Place each selected visual immediately after the paragraph that frames what
+  the reader should notice.
+- Give every inline image descriptive alt text and a caption that explains why
+  it matters. For a wide screenshot, add a focused crop when the critical detail
+  would become too small on mobile.
+- Use screenshots as evidence, diagrams for invisible relationships, and the
+  cover for discovery. Do not treat the cover as a substitute for inline
+  explanatory media.
 - The post body must be valid Markdown/MDX.
 
 ### Step 3: Prepare Metadata
@@ -141,6 +166,7 @@ Derive these fields:
 | `tags` | 2-5 tags, include `dev` and a concrete domain tag. |
 | `author` | Default `Mark`. |
 | `cover` | Required. Generate a 16:9 WebP cover and upload it before publishing. |
+| Inline media | Required when the visual inventory contains meaningful evidence. |
 | `source_kind` | Default `dev-skill`. |
 
 ### Step 4: Save Draft Locally
@@ -182,7 +208,41 @@ Do not embed secrets, internal tokens, raw logs, or private customer details in
 the image. If image generation fails, do not publish without a cover; save the
 draft path and report the blocker.
 
-### Step 6: Publish to Supabase
+### Step 6: Prepare and Upload Inline Media
+
+When the visual asset inventory contains meaningful evidence:
+
+1. Select only visuals with a distinct narrative role.
+2. Crop or redact unrelated private details.
+3. Convert static screenshots to WebP while keeping text legible.
+4. Store durable local artifacts under an article-specific directory.
+5. Run `scripts/upload_blog_assets.py` with `--dry-run`, then upload.
+6. Replace local image paths in the draft with the returned public URLs.
+7. Add specific Chinese alt text and explanatory captions.
+
+Use the storage path:
+
+```text
+app-assets/blog-images/<slug>/<ordered-filename>.webp
+```
+
+Example:
+
+```bash
+WEB_ROOT="${LOVSTUDIO_DEV_BLOG_WEB_ROOT:?set LOVSTUDIO_DEV_BLOG_WEB_ROOT}"
+python3 scripts/upload_blog_assets.py \
+  --slug "<slug>" \
+  --input "path/to/01-problem-overview.webp" \
+  --input "path/to/02-key-detail.webp" \
+  --env-file "$WEB_ROOT/.env.local" \
+  --dry-run
+```
+
+Repeat without `--dry-run` after inspecting the manifest. Follow
+`references/inline-media.md` for selection, compression, placement, captions,
+and responsive-readability checks.
+
+### Step 7: Publish to Supabase
 
 Run a dry run first and inspect the payload:
 
@@ -196,8 +256,13 @@ python3 scripts/publish_blog_post.py \
   --tags "dev,lovstudio" \
   --cover "<public-cover-url>" \
   --env-file "$WEB_ROOT/.env.local" \
+  --require-inline-image \
   --dry-run
 ```
+
+Add `--require-inline-image` whenever the visual inventory selected one or more
+inline assets. Omit the flag only when no meaningful inline visual exists. The
+publisher rejects local or relative image paths in public posts.
 
 Then publish:
 
@@ -215,11 +280,28 @@ python3 scripts/publish_blog_post.py \
   --excerpt "<excerpt>" \
   --tags "dev,lovstudio" \
   --cover "<public-cover-url>" \
-  --env-file "$WEB_ROOT/.env.local"
+  --env-file "$WEB_ROOT/.env.local" \
+  --require-inline-image
 ```
 
 The script upserts by `slug`, sets `is_visible=true`, `show_in_index=true`, and
 uses `source_kind=dev-skill`. A successful publish returns `/blog/<slug>`.
+
+### Step 8: Verify the Public Article
+
+Treat publication as complete only after checking the reader-visible result:
+
+- the article URL returns HTTP 200;
+- title, excerpt, cover, and visibility match the intended payload;
+- every selected inline image URL returns HTTP 200 with an `image/*` content
+  type;
+- the public article contains the expected image URLs, alt text, and captions;
+- the rendered `<img>` count matches the selected visual inventory;
+- wide screenshots remain understandable at narrow reading widths, using a
+  focused crop when necessary.
+
+If the article uses inline visuals, a successful database upsert alone is not a
+complete verification.
 
 ## CLI Reference
 
@@ -232,6 +314,7 @@ uses `source_kind=dev-skill`. A successful publish returns `/blog/<slug>`.
 | `--tags` | `dev,lovstudio` | Comma-separated tags. |
 | `--author` | `Mark` | Author name. |
 | `--cover` | (required by this workflow) | Public cover image URL. Generate and upload before publishing. |
+| `--require-inline-image` | false | Fail when a visually sourced article contains no inline image. |
 | `--published-at` | now | ISO timestamp. |
 | `--source-kind` | `dev-skill` | Stored in `blog_posts.source_kind`. |
 | `--source-path` | `dev-blog:<slug>` | Stable source key for traceability. |
@@ -256,3 +339,10 @@ Publishing requires:
 - `SUPABASE_SERVICE_ROLE_KEY`
 
 Never print or copy these values into the article or final response.
+
+## Additional Resources
+
+- `references/inline-media.md` - Visual inventory, image selection, compression,
+  upload, placement, captions, and live verification.
+- `scripts/upload_blog_assets.py` - Deterministic uploader for public inline
+  blog images.

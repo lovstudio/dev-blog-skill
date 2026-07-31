@@ -3,6 +3,20 @@
 All notable changes to this skill are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) · Versioning: [SemVer](https://semver.org/)
 
+## [0.4.0] - 2026-07-31
+
+### Added
+
+- inventory user-provided screenshots, diagrams, and before/after artifacts
+  before drafting
+- require narrative placement, descriptive alt text, captions, and responsive
+  readability checks for selected inline visuals
+- add `scripts/upload_blog_assets.py` for deterministic public asset uploads
+- add `--require-inline-image` publishing validation and reject local image
+  paths in public posts
+- verify public article image URLs, captions, and rendered image count after
+  publishing
+
 ## [0.3.2] - 2026-05-22
 
 ### Changed

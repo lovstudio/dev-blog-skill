@@ -1,6 +1,6 @@
 # lovstudio-dev-blog
 
-![Version](https://img.shields.io/badge/version-0.3.2-CC785C)
+![Version](https://img.shields.io/badge/version-0.4.0-CC785C)
 
 Canonical publishing contract for LovStudio's Supabase-backed website blog
 feed. It can write and publish a development blog post directly, and it defines
@@ -26,8 +26,14 @@ Ask Claude Code:
 ```
 
 The skill will gather context, draft a Chinese article, save a local Markdown
-draft, generate and upload a cover, run a dry-run payload check, then publish
-to Supabase `blog_posts` by default.
+draft, inventory relevant screenshots and diagrams, generate and upload a
+cover, prepare selected inline images, run a dry-run payload check, then
+publish to Supabase `blog_posts` by default.
+
+When the source material contains meaningful visual evidence, the skill treats
+it as part of the article rather than debugging-only context. Each selected
+image receives a durable public URL, descriptive alt text, a narrative caption,
+and live-page verification.
 
 Dependent skills publish generated Markdown through the same contract:
 
@@ -55,6 +61,21 @@ python3 scripts/publish_blog_post.py \
   --env-file "$WEB_ROOT/.env.local"
 ```
 
+Upload inline article images with the bundled dependency-free uploader:
+
+```bash
+WEB_ROOT="${LOVSTUDIO_DEV_BLOG_WEB_ROOT:?set LOVSTUDIO_DEV_BLOG_WEB_ROOT}"
+python3 scripts/upload_blog_assets.py \
+  --slug "dev-context-to-blog" \
+  --input "cover-image/dev-context-to-blog/inline/01-problem.webp" \
+  --input "cover-image/dev-context-to-blog/inline/02-result.webp" \
+  --env-file "$WEB_ROOT/.env.local" \
+  --dry-run
+```
+
+Repeat without `--dry-run`, embed the returned public URLs in the Markdown, and
+pass `--require-inline-image` to the publisher.
+
 ## Options
 
 | Option | Default | Description |
@@ -66,6 +87,7 @@ python3 scripts/publish_blog_post.py \
 | `--tags` | `dev,lovstudio` | Comma-separated tags. |
 | `--author` | `Mark` | Author name. |
 | `--cover` | empty | Required for published posts. Use `--draft` to skip cover while saving a hidden draft. |
+| `--require-inline-image` | false | Fail when the post is expected to contain inline visual evidence but has no embedded image. |
 | `--published-at` | now | ISO timestamp. |
 | `--source-kind` | `dev-skill` | Stored in `blog_posts.source_kind`. |
 | `--source-path` | `dev-blog:<slug>` | Stable source key. |

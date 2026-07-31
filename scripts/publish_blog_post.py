@@ -16,11 +16,13 @@ import sys
 import urllib.error
 import urllib.request
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 
 DEFAULT_SOURCE_KIND = "dev-skill"
 DEFAULT_AUTHOR = "Mark"
+MARKDOWN_IMAGE_RE = re.compile(r"!\[[^\]]*\]\(\s*<?([^\s)>]+)>?(?:\s+[^)]*)?\)")
+HTML_IMAGE_RE = re.compile(r"<img\b[^>]*\bsrc=[\"']([^\"']+)[\"']", re.IGNORECASE)
 
 
 def load_env_file(path: Optional[Path]) -> None:
@@ -97,6 +99,36 @@ def read_content(path: Path) -> str:
     return content
 
 
+def inline_image_sources(markdown: str) -> List[str]:
+    sources = MARKDOWN_IMAGE_RE.findall(markdown)
+    sources.extend(HTML_IMAGE_RE.findall(markdown))
+    return [source.strip() for source in sources if source.strip()]
+
+
+def validate_inline_images(markdown: str, require_inline_image: bool, published: bool) -> None:
+    sources = inline_image_sources(markdown)
+    if require_inline_image and not sources:
+        raise SystemExit(
+            "--require-inline-image was set, but the post body has no Markdown or HTML image. "
+            "Upload the selected visual assets and embed their public URLs before publishing."
+        )
+
+    if not published:
+        return
+
+    non_public = [
+        source
+        for source in sources
+        if not source.lower().startswith(("https://", "http://"))
+    ]
+    if non_public:
+        joined = ", ".join(non_public)
+        raise SystemExit(
+            "Published posts must use public HTTP(S) URLs for inline images. "
+            f"Replace these local or relative sources first: {joined}"
+        )
+
+
 def build_payload(args: argparse.Namespace, content: str) -> Dict[str, Any]:
     title = args.title.strip()
     if not title:
@@ -104,6 +136,7 @@ def build_payload(args: argparse.Namespace, content: str) -> Dict[str, Any]:
     cover = args.cover.strip()
     if not args.draft and not cover:
         raise SystemExit("--cover is required for published posts. Generate and upload a cover, or pass --draft.")
+    validate_inline_images(content, args.require_inline_image, published=not args.draft)
 
     slug = args.slug.strip() if args.slug else slugify(title)
     excerpt = args.excerpt.strip() if args.excerpt else first_paragraph(content)
@@ -173,6 +206,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--tags", default="dev,lovstudio", help="Comma-separated tags.")
     parser.add_argument("--author", default=DEFAULT_AUTHOR, help="Author name.")
     parser.add_argument("--cover", default="", help="Public cover image URL. Required unless --draft is set.")
+    parser.add_argument(
+        "--require-inline-image",
+        action="store_true",
+        help="Fail when the post body has no inline image. Use when the source-material inventory includes visuals.",
+    )
     parser.add_argument("--published-at", default="", help="ISO timestamp. Defaults to now.")
     parser.add_argument("--source-kind", default=DEFAULT_SOURCE_KIND, help="Source kind stored in blog_posts.source_kind.")
     parser.add_argument("--source-path", default="", help="Stable source key. Defaults to dev-blog:<slug>.")
