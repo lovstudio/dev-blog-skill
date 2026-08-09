@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Upload inline blog images to LovStudio's public Supabase storage bucket."""
+"""Upload inline blog images to Skill Publisher's public Supabase storage bucket."""
 
 from __future__ import annotations
 
@@ -135,7 +135,7 @@ def upload_record(
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Upload one or more inline blog images to LovStudio's public Supabase storage."
+        description="Upload one or more inline blog images to Skill Publisher's public Supabase storage."
     )
     parser.add_argument("--slug", required=True, help="Blog slug in lowercase ASCII kebab-case.")
     parser.add_argument(

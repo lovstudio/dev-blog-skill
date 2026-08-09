@@ -1,11 +1,11 @@
 ---
 name: sgc-dev-blog
 category: Dev Tools
-tagline: "Write or sync Markdown into LovStudio's Supabase-backed website blog feed."
+tagline: "Write or sync Markdown into Skill Publisher's Supabase-backed website blog feed."
 description: >
-  Own the LovStudio website blog publishing contract. Summarize the current
+  Own the Skill Publisher website blog publishing contract. Summarize the current
   development context and its screenshots, diagrams, or other visual evidence
-  into a practical Chinese blog post, then publish it to LovStudio's Supabase
+  into a practical Chinese blog post, then publish it to Skill Publisher's Supabase
   `blog_posts` table. Also provide the automation semantics that dependent
   skills use when they sync generated Markdown artifacts to the website blog.
   Trigger when the user says "生成博客", "同步到网站博客", "总结上下文写博文",
@@ -16,14 +16,14 @@ compatibility: >
   Requires Python 3.8+. Publishing requires Supabase service-role credentials
   available in environment variables or a local .env file.
 metadata:
-  author: lovstudio
+  author: contributors
   version: "0.4.0"
   tags: dev blog supabase writing publishing
 ---
 
 # Dev Blog
 
-Canonical publishing contract for LovStudio's website blog feed.
+Canonical publishing contract for Skill Publisher's website blog feed.
 
 This skill can directly turn the current development session into a useful
 Chinese technical blog post and publish it, and it also defines the automation
@@ -34,8 +34,8 @@ they publish generated Markdown artifacts to `blog_posts`.
 
 - The user asks to summarize current context and write a blog post.
 - The user wants a development log, incident write-up, or lessons learned article.
-- The user asks to sync a generated post to the LovStudio website blog list.
-- Another LovStudio skill needs to publish generated Markdown to the website
+- The user asks to sync a generated post to the Skill Publisher website blog list.
+- Another Skill Publisher skill needs to publish generated Markdown to the website
   blog system. That skill should declare `sgc-dev-blog` as a dependency
   and follow this publishing contract.
 - Trigger phrases: "生成博客", "同步到网站博客", "总结上下文写博文", "开发日志", "generate blog post", "sync to website blog".
@@ -56,10 +56,10 @@ they publish generated Markdown artifacts to `blog_posts`.
   embed the selected items as durable public assets instead of silently
   dropping them.
 - Final responses from dependent skills must include
-  `Published to LovStudio: yes/no` and the public URL when publish succeeds.
+  `Published to Skill Publisher: yes/no` and the public URL when publish succeeds.
 
 Dependent skills should not invent separate Supabase payload semantics. They may
-use website sync scripts from the configured LovStudio website repo, but
+use website sync scripts from the configured Skill Publisher website repo, but
 those scripts are part of this `dev-blog` publishing contract.
 
 Supported publishing modes:
@@ -83,7 +83,7 @@ Default publishing behavior:
 Current dependent publishing commands:
 
 ```bash
-WEB_ROOT="${LOVSTUDIO_DEV_BLOG_WEB_ROOT:?set LOVSTUDIO_DEV_BLOG_WEB_ROOT}"
+WEB_ROOT="${SKILL_DEV_BLOG_WEB_ROOT:?set SKILL_DEV_BLOG_WEB_ROOT}"
 cd "$WEB_ROOT" && pnpm run sync:research -- [markdown_path]
 cd "$WEB_ROOT" && pnpm run sync:distill -- [markdown_path]
 ```
@@ -118,7 +118,7 @@ When the inventory contains visual material, read
 `references/inline-media.md` completely before drafting or uploading assets.
 
 If the topic or audience is unclear, use `AskUserQuestion` for one concise
-question. The publish target defaults to the LovStudio website blog; ask about
+question. The publish target defaults to the Skill Publisher website blog; ask about
 the target only if the user mentions multiple possible destinations. Do not ask
 for fields that can be inferred from the current context.
 
@@ -229,7 +229,7 @@ app-assets/blog-images/<slug>/<ordered-filename>.webp
 Example:
 
 ```bash
-WEB_ROOT="${LOVSTUDIO_DEV_BLOG_WEB_ROOT:?set LOVSTUDIO_DEV_BLOG_WEB_ROOT}"
+WEB_ROOT="${SKILL_DEV_BLOG_WEB_ROOT:?set SKILL_DEV_BLOG_WEB_ROOT}"
 python3 scripts/upload_blog_assets.py \
   --slug "<slug>" \
   --input "path/to/01-problem-overview.webp" \
@@ -247,13 +247,13 @@ and responsive-readability checks.
 Run a dry run first and inspect the payload:
 
 ```bash
-WEB_ROOT="${LOVSTUDIO_DEV_BLOG_WEB_ROOT:?set LOVSTUDIO_DEV_BLOG_WEB_ROOT}"
+WEB_ROOT="${SKILL_DEV_BLOG_WEB_ROOT:?set SKILL_DEV_BLOG_WEB_ROOT}"
 python3 scripts/publish_blog_post.py \
   --input .output/dev-blog/<slug>.md \
   --title "<title>" \
   --slug "<slug>" \
   --excerpt "<excerpt>" \
-  --tags "dev,lovstudio" \
+  --tags "dev,skill-publisher" \
   --cover "<public-cover-url>" \
   --env-file "$WEB_ROOT/.env.local" \
   --require-inline-image \
@@ -272,13 +272,13 @@ for a confirmation gate. If the user asks for draft/local-only/no publish, stop
 after saving the draft and report the absolute draft path.
 
 ```bash
-WEB_ROOT="${LOVSTUDIO_DEV_BLOG_WEB_ROOT:?set LOVSTUDIO_DEV_BLOG_WEB_ROOT}"
+WEB_ROOT="${SKILL_DEV_BLOG_WEB_ROOT:?set SKILL_DEV_BLOG_WEB_ROOT}"
 python3 scripts/publish_blog_post.py \
   --input .output/dev-blog/<slug>.md \
   --title "<title>" \
   --slug "<slug>" \
   --excerpt "<excerpt>" \
-  --tags "dev,lovstudio" \
+  --tags "dev,skill-publisher" \
   --cover "<public-cover-url>" \
   --env-file "$WEB_ROOT/.env.local" \
   --require-inline-image
@@ -311,7 +311,7 @@ complete verification.
 | `--title` | (required) | Blog post title. |
 | `--slug` | generated from title | URL slug. Use ASCII kebab-case. |
 | `--excerpt` | first paragraph | Blog card summary. |
-| `--tags` | `dev,lovstudio` | Comma-separated tags. |
+| `--tags` | `dev,skill-publisher` | Comma-separated tags. |
 | `--author` | `Mark` | Author name. |
 | `--cover` | (required by this workflow) | Public cover image URL. Generate and upload before publishing. |
 | `--require-inline-image` | false | Fail when a visually sourced article contains no inline image. |
@@ -325,7 +325,7 @@ complete verification.
 
 ## User Configuration
 
-Set `LOVSTUDIO_DEV_BLOG_WEB_ROOT` to the LovStudio website repo root. The
+Set `SKILL_DEV_BLOG_WEB_ROOT` to the Skill Publisher website repo root. The
 publisher also accepts `--env-file`, so users can keep Supabase credentials in
 their own project-specific environment file.
 
@@ -346,3 +346,11 @@ Never print or copy these values into the article or final response.
   upload, placement, captions, and live verification.
 - `scripts/upload_blog_assets.py` - Deterministic uploader for public inline
   blog images.
+
+## Runtime context (shared)
+
+运行前读取本 Skill 包的 `skill.yaml`，由宿主提供 `skill-runtime/v1` 上下文。字段解析顺序为：当前请求、项目上下文、个人 Preferences、品牌 Profile、通用默认值。
+
+- 只使用 Manifest 声明的字段；Profile 保存公开品牌事实，Preferences 保存个人工作偏好。
+- `required: true` 字段缺失时，按 Manifest 的问题配置向用户提出一个聚焦问题；用户明确同意后再保存回答。
+- 报错提供可复制的 `context_id`、字段路径与来源，诊断内容避开秘密、完整私人路径和原始配置。

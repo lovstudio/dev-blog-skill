@@ -2,17 +2,17 @@
 
 ![Version](https://img.shields.io/badge/version-0.4.0-CC785C)
 
-Canonical publishing contract for LovStudio's Supabase-backed website blog
+Canonical publishing contract for Skill Publisher's Supabase-backed website blog
 feed. It can write and publish a development blog post directly, and it defines
 the automation semantics used by dependent skills such as `deep-research` and
 `sgc-distill`.
 
-Part of [lovstudio skills](https://github.com/lovstudio/skills) — by [lovstudio.ai](https://lovstudio.ai)
+Part of [skills](https://example.com/skills/skills) — by [example.com](https://example.com)
 
 ## Install
 
 ```bash
-npx lovstudio skills add dev-blog -g -y
+npx skills add dev-blog -g -y
 ```
 
 Requires Python 3.8+. No third-party Python packages are needed.
@@ -38,7 +38,7 @@ and live-page verification.
 Dependent skills publish generated Markdown through the same contract:
 
 ```bash
-WEB_ROOT="${LOVSTUDIO_DEV_BLOG_WEB_ROOT:?set LOVSTUDIO_DEV_BLOG_WEB_ROOT}"
+WEB_ROOT="${SKILL_DEV_BLOG_WEB_ROOT:?set SKILL_DEV_BLOG_WEB_ROOT}"
 cd "$WEB_ROOT" && pnpm run sync:research -- [markdown_path]
 cd "$WEB_ROOT" && pnpm run sync:distill -- [markdown_path]
 ```
@@ -50,13 +50,13 @@ the shared `blog_posts` semantics: `source_kind`, `source_path`,
 You can also run the publisher directly:
 
 ```bash
-WEB_ROOT="${LOVSTUDIO_DEV_BLOG_WEB_ROOT:?set LOVSTUDIO_DEV_BLOG_WEB_ROOT}"
+WEB_ROOT="${SKILL_DEV_BLOG_WEB_ROOT:?set SKILL_DEV_BLOG_WEB_ROOT}"
 python3 scripts/publish_blog_post.py \
   --input .output/dev-blog/example.md \
   --title "一次开发上下文如何变成可复用博客" \
   --slug "dev-context-to-blog" \
   --excerpt "把开发过程沉淀成网站博客，关键在于先结构化上下文，再用 Supabase 作为发布源。" \
-  --tags "dev,lovstudio,blog" \
+  --tags "dev,skill-publisher,blog" \
   --cover "https://example.com/blog-cover.webp" \
   --env-file "$WEB_ROOT/.env.local"
 ```
@@ -64,7 +64,7 @@ python3 scripts/publish_blog_post.py \
 Upload inline article images with the bundled dependency-free uploader:
 
 ```bash
-WEB_ROOT="${LOVSTUDIO_DEV_BLOG_WEB_ROOT:?set LOVSTUDIO_DEV_BLOG_WEB_ROOT}"
+WEB_ROOT="${SKILL_DEV_BLOG_WEB_ROOT:?set SKILL_DEV_BLOG_WEB_ROOT}"
 python3 scripts/upload_blog_assets.py \
   --slug "dev-context-to-blog" \
   --input "cover-image/dev-context-to-blog/inline/01-problem.webp" \
@@ -84,7 +84,7 @@ pass `--require-inline-image` to the publisher.
 | `--title` | (required) | Blog post title. |
 | `--slug` | generated from title | URL slug. |
 | `--excerpt` | first paragraph | Blog card summary. |
-| `--tags` | `dev,lovstudio` | Comma-separated tags. |
+| `--tags` | `dev,skill-publisher` | Comma-separated tags. |
 | `--author` | `Mark` | Author name. |
 | `--cover` | empty | Required for published posts. Use `--draft` to skip cover while saving a hidden draft. |
 | `--require-inline-image` | false | Fail when the post is expected to contain inline visual evidence but has no embedded image. |
@@ -109,7 +109,7 @@ environment or in the file passed through `--env-file`.
 
 ## User Configuration
 
-Set `LOVSTUDIO_DEV_BLOG_WEB_ROOT` to the website repo root used for sync scripts
+Set `SKILL_DEV_BLOG_WEB_ROOT` to the website repo root used for sync scripts
 and default `.env.local` lookup.
 
 ## License

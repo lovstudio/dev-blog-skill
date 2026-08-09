@@ -36,5 +36,5 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) · Versioning: 
 ### Added
 
 - standardize runtime configuration and skill name
-- replace author-local website paths with LOVSTUDIO_DEV_BLOG_WEB_ROOT
-- use canonical lovstudio CLI install command
+- replace author-local website paths with SKILL_DEV_BLOG_WEB_ROOT
+- use canonical skill-publisher CLI install command
