@@ -1,5 +1,5 @@
 ---
-name: lovstudio-dev-blog
+name: sgc-dev-blog
 category: Dev Tools
 tagline: "Write or sync Markdown into LovStudio's Supabase-backed website blog feed."
 description: >
@@ -27,7 +27,7 @@ Canonical publishing contract for LovStudio's website blog feed.
 
 This skill can directly turn the current development session into a useful
 Chinese technical blog post and publish it, and it also defines the automation
-contract used by skills such as `deep-research` and `lovstudio-distill` when
+contract used by skills such as `deep-research` and `sgc-distill` when
 they publish generated Markdown artifacts to `blog_posts`.
 
 ## When to Use
@@ -36,13 +36,13 @@ they publish generated Markdown artifacts to `blog_posts`.
 - The user wants a development log, incident write-up, or lessons learned article.
 - The user asks to sync a generated post to the LovStudio website blog list.
 - Another LovStudio skill needs to publish generated Markdown to the website
-  blog system. That skill should declare `lovstudio-dev-blog` as a dependency
+  blog system. That skill should declare `sgc-dev-blog` as a dependency
   and follow this publishing contract.
 - Trigger phrases: "生成博客", "同步到网站博客", "总结上下文写博文", "开发日志", "generate blog post", "sync to website blog".
 
 ## Publishing Contract
 
-`lovstudio-dev-blog` owns the shared `blog_posts` semantics:
+`sgc-dev-blog` owns the shared `blog_posts` semantics:
 
 - `blog_posts` is the canonical website blog target.
 - `source_kind` identifies the producer, such as `dev-skill`, `deep-research`,

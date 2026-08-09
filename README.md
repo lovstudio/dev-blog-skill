@@ -1,11 +1,11 @@
-# lovstudio-dev-blog
+# sgc-dev-blog
 
 ![Version](https://img.shields.io/badge/version-0.4.0-CC785C)
 
 Canonical publishing contract for LovStudio's Supabase-backed website blog
 feed. It can write and publish a development blog post directly, and it defines
 the automation semantics used by dependent skills such as `deep-research` and
-`lovstudio-distill`.
+`sgc-distill`.
 
 Part of [lovstudio skills](https://github.com/lovstudio/skills) — by [lovstudio.ai](https://lovstudio.ai)
 
@@ -22,7 +22,7 @@ Requires Python 3.8+. No third-party Python packages are needed.
 Ask Claude Code:
 
 ```text
-/lovstudio-dev-blog 总结这次开发过程，生成一篇博客并同步到网站
+/sgc-dev-blog 总结这次开发过程，生成一篇博客并同步到网站
 ```
 
 The skill will gather context, draft a Chinese article, save a local Markdown
@@ -43,7 +43,7 @@ cd "$WEB_ROOT" && pnpm run sync:research -- [markdown_path]
 cd "$WEB_ROOT" && pnpm run sync:distill -- [markdown_path]
 ```
 
-Those sync scripts own source-specific parsing, while `lovstudio-dev-blog` owns
+Those sync scripts own source-specific parsing, while `sgc-dev-blog` owns
 the shared `blog_posts` semantics: `source_kind`, `source_path`,
 `is_visible`, `show_in_index`, and final publish status reporting.
 
