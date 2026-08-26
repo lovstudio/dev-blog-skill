@@ -17,7 +17,7 @@ compatibility: >
   available in environment variables or a local .env file.
 metadata:
   author: contributors
-  version: "0.4.0"
+  version: "0.5.0"
   tags: dev blog supabase writing publishing
 ---
 
@@ -101,6 +101,8 @@ unavailable, keep the generated artifact and report the exact rerun command.
 Collect the source material before writing:
 
 - Recent user intent and constraints from the conversation.
+- Any writing style profile explicitly supplied by the user or resolved from
+  the runtime preference `user.style_profile_path`.
 - Relevant files, diffs, commands, errors, and verification output.
 - Every attached image, user-supplied image path, reproduction screenshot,
   generated diagram, and before/after artifact relevant to the story.
@@ -116,6 +118,20 @@ private information.
 
 When the inventory contains visual material, read
 `references/inline-media.md` completely before drafting or uploading assets.
+
+Resolve writing style in this order: the current request, project context,
+`user.style_profile_path`, `brand.tone`, then this Skill's default style rules.
+When a style profile path is available, read the file completely and read
+`references/writing-style.md` before drafting. Turn the profile into a compact
+style brief covering voice, perspective, paragraph rhythm, structure,
+vocabulary, evidence, emotional arc, rhetorical habits, and prohibitions.
+Never hardcode a personal profile path into the reusable Skill or expose a
+private local path in the public article.
+
+Style changes presentation, not truth. Use first-person claims only when the
+source context supports that the named author actually performed or witnessed
+the action. If a configured profile cannot be read, report the path as a local
+draft blocker instead of silently claiming the article matches it.
 
 If the topic or audience is unclear, use `AskUserQuestion` for one concise
 question. The publish target defaults to the Skill Publisher website blog; ask about
@@ -140,6 +156,8 @@ Use this structure unless the context clearly calls for a different one:
 
 Style rules:
 
+- Apply the resolved style brief before the generic rules below. A user's
+  explicit per-article instruction overrides their stored profile.
 - Prefer concrete nouns, file/table names, commands, and exact constraints.
 - Avoid generic AI productivity claims.
 - Do not include secrets, tokens, private customer details, or raw `.env` values.
@@ -153,6 +171,11 @@ Style rules:
   cover for discovery. Do not treat the cover as a substitute for inline
   explanatory media.
 - The post body must be valid Markdown/MDX.
+
+Before accepting the draft, run the style-profile validation in
+`references/writing-style.md`. Revise mismatches that affect voice, rhythm,
+evidence, or prohibited language; do not mechanically copy catchphrases,
+emotional outbursts, or personal anecdotes from the reference corpus.
 
 ### Step 3: Prepare Metadata
 
@@ -329,6 +352,10 @@ Set `SKILL_DEV_BLOG_WEB_ROOT` to the Skill Publisher website repo root. The
 publisher also accepts `--env-file`, so users can keep Supabase credentials in
 their own project-specific environment file.
 
+Set the runtime preference `user.style_profile_path` to a readable Markdown or
+text style profile when blog drafts should consistently follow a personal
+writing voice. An explicit profile in the current request takes precedence.
+
 ## Dependencies
 
 No third-party Python dependencies.
@@ -344,6 +371,8 @@ Never print or copy these values into the article or final response.
 
 - `references/inline-media.md` - Visual inventory, image selection, compression,
   upload, placement, captions, and live verification.
+- `references/writing-style.md` - Style-profile resolution, extraction,
+  authenticity boundaries, and pre-publish validation.
 - `scripts/upload_blog_assets.py` - Deterministic uploader for public inline
   blog images.
 

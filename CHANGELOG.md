@@ -3,6 +3,13 @@
 All notable changes to this skill are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) · Versioning: [SemVer](https://semver.org/)
 
+## [0.5.0] - 2026-08-26
+
+### Added
+
+- add personal writing style profiles
+- resolve, read, and validate configurable writing style profiles before publication
+
 ## [0.4.0] - 2026-07-31
 
 ### Added

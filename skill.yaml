@@ -1,6 +1,6 @@
 schema: skill-manifest/v1
 id: lov-dev-blog
-version: 0.4.0
+version: 0.5.0
 runtime: skill-runtime/v1
 context:
   profile:
@@ -23,6 +23,9 @@ context:
     - path: user.timezone
       required: false
       question: 需要使用哪个时区处理日期和时间？
+    - path: user.style_profile_path
+      required: false
+      question: 如果需要固定个人文风，请提供可读取的文风档案路径。
   interaction:
     ask_missing: true
     max_questions: 1

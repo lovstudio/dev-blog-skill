@@ -1,6 +1,6 @@
 # lov-dev-blog
 
-![Version](https://img.shields.io/badge/version-0.4.0-CC785C)
+![Version](https://img.shields.io/badge/version-0.5.0-CC785C)
 
 Canonical publishing contract for Skill Publisher's Supabase-backed website blog
 feed. It can write and publish a development blog post directly, and it defines
@@ -29,6 +29,11 @@ The skill will gather context, draft a Chinese article, save a local Markdown
 draft, inventory relevant screenshots and diagrams, generate and upload a
 cover, prepare selected inline images, run a dry-run payload check, then
 publish to Supabase `blog_posts` by default.
+
+When you provide a writing style profile, the skill reads it before drafting,
+extracts a portable style brief, and validates the finished article against
+that brief. The profile controls voice and rhythm without overriding factual
+evidence or inventing first-person experience.
 
 When the source material contains meaningful visual evidence, the skill treats
 it as part of the article rather than debugging-only context. Each selected
@@ -111,6 +116,12 @@ environment or in the file passed through `--env-file`.
 
 Set `SKILL_DEV_BLOG_WEB_ROOT` to the website repo root used for sync scripts
 and default `.env.local` lookup.
+
+To keep a personal writing voice across articles, configure the runtime
+preference `user.style_profile_path` with a readable Markdown or text profile,
+or provide a profile path in the current request. Request-level instructions
+take precedence, and personal absolute paths are never embedded in the public
+post or the reusable Skill package.
 
 ## License
 
