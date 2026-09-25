@@ -15,13 +15,15 @@ license: MIT
 compatibility: >
   Requires Python 3.8+. Publishing requires Supabase service-role credentials
   available in environment variables or a local .env file.
+depends_on:
+  - lov-branding-consistency
 metadata:
   author: contributors
-  version: "0.5.0"
+  version: "0.5.1"
   tags: dev blog supabase writing publishing
 ---
 
-# Dev Blog
+# 研发手记 · Dev Journal
 
 Canonical publishing contract for Skill Publisher's website blog feed.
 

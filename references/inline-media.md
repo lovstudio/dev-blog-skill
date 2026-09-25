@@ -124,3 +124,8 @@ After publishing:
 
 Treat missing images, local-only paths, broken URLs, absent captions, or
 unreadable mobile details as publishing defects.
+
+## 站点特定备注
+
+- lovstudio.ai/blog 列表页是客户端渲染：`curl` 抓到的 HTML 里一篇文章都没有，grep 不到不等于没进列表；列表回读必须用 ego-browser 渲染后再查卡片（2026-09-09, a9b060d）
+- 内联图按同一 object path 覆盖上传后，浏览器和 CDN 会继续返回旧图（`cacheControl=31536000`）；回读尺寸要带 `?v=<ts>` 绕开缓存，否则会误判成上传没生效（2026-09-09, a9b060d）
