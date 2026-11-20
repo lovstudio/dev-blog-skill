@@ -1,6 +1,6 @@
 # 研发手记 · Dev Journal
 
-![Version](https://img.shields.io/badge/version-0.5.2-CC785C)
+![Version](https://img.shields.io/badge/version-0.5.3-CC785C)
 
 Canonical publishing contract for Skill Publisher's Supabase-backed website blog
 feed. It can write and publish a development blog post directly, and it defines
@@ -12,7 +12,7 @@ Part of [skills](https://example.com/skills/skills) — by [example.com](https:/
 ## Install
 
 ```bash
-npx skills add dev-blog -g -y
+npx lovstudio skills add dev-blog -g -y
 ```
 
 Requires Python 3.8+. No third-party Python packages are needed.
